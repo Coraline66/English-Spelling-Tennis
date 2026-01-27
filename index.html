@@ -1,0 +1,2677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, width=device-width">
+    <title>Spelling Tennis: PEP Edition</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            
+            background-color: #8E24AA;
+            
+            color: #fff;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .header, .settings-container, .spelling-container, .game-container, .rules-container {
+            width: 96%;
+            max-width: none; 
+            margin: 0 auto 15px auto; 
+            box-sizing: border-box;
+        }
+        
+        @media screen and (min-width: 769px) {
+            .header, .settings-container, .spelling-container, .game-container, .rules-container {
+                width: 96%;
+                max-width: none; 
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            background: rgba(225, 190, 231, 0.9); 
+            padding: 15px;
+            border-radius: 30px;
+            border: 4px solid #E1BEE7;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(8px);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #4A148C; 
+            text-shadow: 2px 2px 0 #FFF;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #5D3F6A;
+            font-weight: bold;
+        }
+        
+        /* Settings Box */
+        .settings-container {
+            background-color: rgba(243, 229, 245, 0.95); 
+            padding: 15px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(103, 58, 183, 0.2);
+            border: 5px solid #CE93D8;
+            
+            display: flex;             
+            flex-wrap: wrap;          
+            justify-content: center;  
+            align-items: flex-start;  
+            gap: 20px;             
+            width: 96%;        
+            max-width: none;
+            box-sizing:border-box;
+        }
+        
+        /* Settings Grid - One Line */
+        .settings-grid {
+            display: flex;
+            flex-wrap: nowrap; 
+            gap: 15px;          
+            justify-content: space-evenly; 
+            align-items: stretch;
+            overflow-x: auto;
+            width: 100%;
+        }
+        
+        /* PC/宽屏下优化间距 */
+        @media screen and (min-width: 769px) {
+            .settings-grid {
+                justify-content: space-evenly; 
+            }
+        }
+        
+        /* 桌面端允许换行，同时保持均匀分布 */
+        @media screen and (min-width: 1200px) {
+            .settings-grid {
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+            }
+        }
+        
+        .setting-group {
+            background-color: #FFFFFF;
+            padding: clamp(8px, 1vw, 10px);
+            border-radius: 15px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+           
+            border: 2px solid #E1BEE7;
+            margin-bottom: 15px;
+            text-align: center;
+            
+            min-width: clamp(200px, 15vw, 280px); 
+            flex: 0 1 auto; 
+            gap: 5px;
+        }
+        
+        .word-count-display {
+            margin-top: 5px;
+            color: #8E24AA; 
+            font-size: 0.9em;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', sans-serif; 
+            align-self: flex-end; 
+        }
+        
+        .setting-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #8E24AA;
+            font-size: clamp(0.8rem, 1.2vw, 0.95rem); 
+            font-weight: bold;
+            white-space: nowrap; 
+        }
+        
+        /* Buttons & Inputs */
+        .mode-btn {
+            background: #E1BEE7;
+            color: #4A148C;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin: 0 2px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 0 #BA68C8;
+            white-space: nowrap;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            background: #FFD54F;
+            color: #5D4037;
+            box-shadow: 0 4px 0 #FBC02D;
+        }
+        
+        .mode-btn.active {
+            background: #AB47BC;
+            color: white;
+            box-shadow: 0 2px 0 #7B1FA2;
+            transform: translateY(2px);
+        }
+
+        /* Name Inputs Container - HORIZONTAL */
+        .name-inputs-row {
+            display: flex;
+            gap: 5px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        select.custom-select {
+            padding: 6px;
+            border-radius: 8px;
+            border: 2px solid #AB47BC;
+            background-color: white;
+            color: #8E24AA;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 100%;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .win-score-input input, .name-input {
+            padding: 6px;
+            border-radius: 8px;
+            border: 2px solid #AB47BC;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #8E24AA;
+        }
+        
+        .win-score-input input { width: 50px; font-size: 1rem; }
+        .name-input { width: 100%; margin-bottom: 0; font-size: 0.85rem; }
+
+        /* Custom Input Section */
+        .custom-input-container {
+            width: 100%;
+            background-color: #FFF3E0;
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 8px;
+            border: 2px dashed #FFB74D;
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .custom-textarea {
+            width: 100%;
+            height: 50px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 2px solid #FFB74D;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.85rem;
+            color: #5D4037;
+            resize: vertical;
+            margin-bottom: 5px;
+        }
+        
+        .file-upload-wrapper {
+            width: 100%;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .file-input {
+            font-size: 0.8rem;
+            color: #E65100;
+            width: 95%;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 5px 0;
+            color: #FF9800;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px dashed #FFB74D;
+        }
+        
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+
+        .load-btn {
+            background-color: #66BB6A;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 0 #388E3C;
+        }
+
+        .load-btn:hover { transform: translateY(-2px); background-color: #81C784; }
+        .load-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #388E3C; }
+        .load-btn:disabled { background-color: #ccc; box-shadow: none; cursor: not-allowed; }
+
+        #customStatus { margin-top: 4px; font-weight: bold; font-size: 0.75rem; }
+
+        /* Control Buttons */
+        .top-btn {
+            background-color: #FF7043;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #D84315;
+            margin: 0 8px;
+            transition: transform 0.1s;
+        }
+        
+        .top-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #D84315; }
+        .top-btn.reset { background-color: #29B6F6; box-shadow: 0 4px 0 #0277BD; }
+        .top-btn.pause { background-color: #FFCA28; box-shadow: 0 4px 0 #FFA000; color: #5D4037; }
+        .top-btn.home { background-color: #9C27B0; box-shadow: 0 4px 0 #7B1FA2; }
+
+        /* Game Area */
+        .game-container {
+            position: relative;
+            width: 96%;
+            max-width: none;
+            margin: 0 auto 15px auto;
+        }
+        
+        #gameCanvas {
+            background-color: rgba(156, 39, 176, 0.85);
+            border: 8px solid #7B1FA2;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            height: auto; 
+            box-sizing: border-box;
+        }
+        
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px dashed #FFCC80; 
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+        .review-item:last-child { border-bottom: none; }
+        
+        .review-word { font-size: 1.1em; font-weight: bold; color: #333; }
+        .review-hint { font-size: 0.9em; color: #666; margin-top: 4px; font-style: italic; }
+        .review-ans  { font-size: 0.9em; color: #E65100; font-weight: bold; margin-top: 2px; }
+        .status-tag {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: white;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        .tag-correct { background-color: #4CAF50; } 
+        .tag-missed  { background-color: #F44336; } 
+        .tag-computer { background-color: #9E9E9E; } 
+      
+        .review-tab {
+            padding: 8px 20px;
+            border: 2px solid #ddd;
+            background: #f5f5f5;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', sans-serif;
+            font-weight: bold;
+            color: #777;
+            transition: all 0.2s;
+            margin: 0 5px; 
+        }
+        
+        .review-tab:hover {
+            background-color: #e0e0e0;
+        }
+
+        .review-tab.active {
+            background: #FF9800; 
+            color: white;
+            border-color: #F57C00;
+            transform: scale(1.05); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Score Overlay */
+        .score-overlay {
+            position: absolute;
+            top: 15px; 
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+            pointer-events: none; 
+        }
+
+        .score-box-small {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 15px; 
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #FFF;
+            min-width: 80px; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .score-label-small {
+            font-size: 0.8rem; 
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 2px;
+            white-space: nowrap;
+        }
+
+        .score-value-small {
+            font-size: 1.8rem; 
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .p1-color { color: #FF6B6B; }
+        .p2-color { color: #06D6A0; }
+
+        .coin-box-small {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 4px 12px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid gold;
+            margin-top: 5px;
+        }
+
+        .coin-icon-small {
+            font-size: 1.2rem; 
+            color: #b8860b;
+            font-weight: bold;
+            background: radial-gradient(ellipse at center, #ffd700 0%, #daa520 100%);
+            width: 30px; 
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #b8860b;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .coin-val-small {
+            font-size: 1rem; 
+            color: gold;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #b8860b;
+            margin-top: 2px;
+        }
+
+        /* Spelling Box */
+        .spelling-container {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px; /* 从 15px 减少到 5px */
+            border-radius: 25px;
+            width: 96%;
+            max-width: none; 
+            text-align: center;
+            border: 4px solid #CE93D8;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .current-word {
+            font-size: 2.2rem; 
+            color: #8E24AA;
+            background-color: #F3E5F5;
+            padding: 10px;
+            border-radius: 20px;
+            border: 3px dashed #AB47BC;
+            margin-bottom: 4px; 
+            font-weight: bold;
+            min-height: 60px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .turn-indicator {
+            font-size: 1.3rem;
+            color: #EC407A;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .game-status {
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background-color: #F3E5F5; 
+            padding: 60px 40px;
+            border-radius: 30px;
+            text-align: center;
+            z-index: 20000; 
+            display: none;
+            border: 8px solid #FFD54F;
+            box-shadow: 0 0 100px rgba(142, 36, 170, 0.6);
+            width: 90%;
+            max-width: 900px;
+            overflow: hidden; 
+        }
+
+        .status-title {
+            font-size: 3.5rem; 
+            font-weight: 800;
+            margin-bottom: 15px;
+            white-space: nowrap;
+            text-shadow: 4px 4px 0 #FFF, 6px 6px 0 rgba(0,0,0,0.1);
+            line-height: 1.2;
+        }
+
+        .status-message {
+            font-size: 1.8rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        @keyframes explosion {
+            0% { box-shadow: 0 0; opacity: 1; transform: scale(0.5); }
+            50% { opacity: 1; }
+            100% {
+                box-shadow: -40px -60px 0 0px currentColor, 
+                            40px -60px 0 0px currentColor, 
+                            -60px 0px 0 0px currentColor, 
+                            60px 0px 0 0px currentColor, 
+                            -40px 60px 0 0px currentColor, 
+                            40px 60px 0 0px currentColor;
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: explosion 1.5s ease-out infinite;
+        }
+
+        .fw-1 { top: 15%; left: 15%; color: #FF4081; animation-delay: 0s; }
+        .fw-2 { top: 15%; right: 15%; color: #00BCD4; animation-delay: 0.5s; }
+        .fw-3 { top: 10%; left: 50%; transform: translateX(-50%); color: #FFEB3B; animation-delay: 1s; }
+
+        /* Corner Decorations */
+        .corner-decoration {
+            position: absolute;
+            font-size: 3.5rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .top-left { top: 20px; left: 20px; animation-delay: 0s; }
+        .top-right { top: 20px; right: 20px; animation-delay: 0.5s; }
+        .bottom-left { bottom: 20px; left: 20px; animation-delay: 1s; }
+        .bottom-right { bottom: 20px; right: 20px; animation-delay: 1.5s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .unicorn-anim {
+            font-size: 150px; 
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: magic-glow-pulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes magic-glow-pulse {
+            0% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+            }
+            50% { 
+                transform: scale(1.25); 
+                filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1)) drop-shadow(0 0 10px #FF4081);
+            }
+            100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+            }
+        }
+        
+        .modal-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Game Rules Section */
+        .rules-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            width: 96%;
+            max-width: none;
+            border: 4px solid #AB47BC;
+            color: #5D3F6A;
+        }
+        
+        .rules-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #8E24AA;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px;
+        }
+
+        .rules-col ul {
+            list-style-type: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .rules-col ul li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .rules-col ul li::before {
+            content: "✨";
+            position: absolute;
+            left: -25px;
+        }
+
+        /* Countdown overlay styles */
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            display: none;
+            border-radius: 25px;
+        }
+
+        .countdown-text {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #FFEB3B;
+            text-shadow: 0 0 20px #FF9800, 0 0 40px #FF5722;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* ========== 响应式布局 ========== */
+        body {
+            touch-action: manipulation; 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none; 
+            user-select: none; 
+        }
+
+        /* ========== 强制横屏模式（移动设备） ========== */
+        #orientationHint {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        #orientationHint.show {
+            display: flex;
+        }
+        
+        #orientationHint .hint-text {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            animation: rotateHint 2s ease-in-out infinite;
+        }
+        
+        #orientationHint .hint-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: rotateIcon 2s ease-in-out infinite;
+        }
+        
+        @keyframes rotateHint {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        @keyframes rotateIcon {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-90deg); }
+            50% { transform: rotate(-90deg); }
+            75% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        /* 移动设备竖屏时显示提示 */
+        @media screen and (max-width: 1024px) and (orientation: portrait) {
+            #orientationHint {
+                display: flex !important;
+            }
+        }
+        
+        @media screen and (orientation: landscape) {
+            #orientationHint {
+                display: none !important;
+            }
+        }
+
+        /* 游戏主容器响应式 */
+        .game-container {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .spelling-container {
+            max-width: none;
+            padding: 5px; 
+            box-sizing: border-box;
+        }
+
+        .settings-container {
+            max-width: none;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Pad设备强制单行布局 (768px - 1024px) */
+        @media screen and (min-width: 768px) and (max-width: 1024px) {
+            .settings-grid {
+                flex-wrap: nowrap !important; 
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                justify-content: space-evenly;
+            }
+            
+            .setting-group {
+                flex: 1 1 auto !important; 
+                min-width: clamp(180px, 12vw, 250px);
+                max-width: none;
+                flex-shrink: 1; 
+            }
+            
+            .setting-label {
+                font-size: clamp(0.75rem, 1vw, 0.9rem);
+            }
+            
+            .mode-btn, select.custom-select, .name-input, .win-score-input input {
+                font-size: clamp(0.75rem, 1vw, 0.85rem);
+            }
+        }
+
+        @media screen and (min-width: 1200px) {
+            /* 确保所有主容器居中，保持统一宽度 */
+            .header, .settings-container, .game-container, .spelling-container, .rules-container {
+                width: 96%;
+                max-width: none; 
+                margin: 0 auto 15px auto;
+            }
+            
+            /* 设置容器宽度统一 */
+            .settings-container {
+                width: 96%;
+                max-width: none; 
+            }
+            
+            .settings-grid {
+                max-width: 100%;
+                justify-content: space-evenly; 
+                flex-wrap: nowrap; 
+            }
+            
+            /* 限制每个设置组的最大宽度，防止过度拉伸 */
+            .setting-group {
+                max-width: 280px; 
+                flex: 0 1 auto; 
+            }
+            
+            /* 游戏控制按钮区域 */
+            .game-controls-top {
+                max-width: 100%;
+            }
+        }
+
+        /* 移动设备横屏模式优化 */
+        @media screen and (orientation: landscape) and (max-width: 767px) {
+            .settings-grid {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .setting-group {
+                min-width: 200px;
+                flex-shrink: 0;
+            }
+        }
+
+        /* 防止按钮双击缩放和文本选择 */
+        button, .mode-btn, .top-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        /* ========== 虚拟键盘样式 ========== */
+        #virtualKeyboard {
+            display: none; 
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 10000; 
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        #virtualKeyboard.show {
+            display: block;
+        }
+
+        #virtualKeyboard.collapsed {
+            transform: translateY(calc(100% - 50px));
+        }
+
+        #virtualKeyboard.collapsed .keyboard-content {
+            display: none;
+        }
+
+        .keyboard-toggle-btn {
+            position: absolute;
+            top: -45px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px 8px 0 0;
+            font-size: 20px;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10001;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .keyboard-toggle-btn:active {
+            background: rgba(200, 200, 200, 0.9);
+            transform: scale(0.95);
+        }
+
+        .keyboard-content {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .keyboard-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .keyboard-key {
+            min-width: 36px;
+            min-height: 40px;
+            padding: 8px 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+            flex: 1;
+            max-width: 50px;
+        }
+
+        .keyboard-key:active {
+            background: rgba(200, 200, 200, 0.9);
+            transform: scale(0.95);
+        }
+
+        .keyboard-key.wide {
+            flex: 1.5;
+            max-width: 70px;
+            font-size: 12px;
+        }
+
+        .keyboard-key.shift-key {
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+            font-weight: bold;
+        }
+
+        .keyboard-key.shift-key.active {
+            background: rgba(255, 152, 0, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            .keyboard-key {
+                min-width: 30px;
+                min-height: 34px;
+                font-size: 16px;
+                padding: 6px 6px;
+                max-width: 42px;
+            }
+            .keyboard-toggle-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+                top: -42px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .keyboard-key {
+                min-width: 26px;
+                min-height: 30px;
+                font-size: 12px;
+                padding: 4px 5px;
+                max-width: 35px;
+            }
+            .keyboard-toggle-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+                top: -35px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 横屏提示 -->
+    <div id="orientationHint">
+        <div class="hint-icon">📱</div>
+        <div class="hint-text">请将设备旋转为横屏模式 🎮</div>
+    </div>
+    <div class="header">
+        <h1>🦄 Spelling Tennis 🎾</h1>
+        <p class="subtitle">Magic School Edition</p>
+    </div>
+    
+    <div class="settings-container">
+        <h2 style="color: #8E24AA; text-align: center; margin-bottom: 10px; font-size: 1.5rem;">✨ Game Setup ✨</h2>
+        
+        <div class="settings-grid">
+            <div class="setting-group">
+                <label class="setting-label">🎮 Game Mode</label>
+                <div>
+                    <button class="mode-btn spelling active" data-mode="spelling">🤖 1 Player</button>
+                    <button class="mode-btn two-player" data-mode="2player">👫 2 Players</button>
+                </div>
+            </div>
+
+            <div class="setting-group" id="nameInputGroup" style="display:none;">
+                <label class="setting-label">👥 Player Names</label>
+                <div class="name-inputs-row">
+                    <input type="text" id="p1NameInput" placeholder="Player 1" value="Player 1" class="name-input">
+                    <input type="text" id="p2NameInput" placeholder="Player 2" value="Player 2" class="name-input">
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <label class="setting-label">📚 Grade / Word List</label>
+                <select id="difficultySelect" class="custom-select">
+                    <option value="grade1">Grade 1 (PEP)</option>
+                    <option value="grade2">Grade 2 (PEP)</option>
+                    <option value="grade3">Grade 3 (PEP)</option>
+                    <option value="grade4">Grade 4 (PEP)</option>
+                    <option value="grade5">Grade 5 (PEP)</option>
+                    <option value="grade6">Grade 6 (PEP)</option>
+                    <option value="grade7">Grade 7 (PEP)</option>
+                    <option value="grade8">Grade 8 (PEP)</option>
+                    <option value="grade9">Grade 9 (PEP)</option>
+                    <option value="custom">✏️ Custom List (Type Words)</option>
+                </select>
+            
+                <div id="wordCountDisplay" class="word-count-display">Loaded 0 words</div>
+                
+                <div id="customInputContainer" class="custom-input-container">
+                    <label style="color:#E65100; font-weight:bold; margin-bottom:2px; display:block; font-size: 0.8rem;">Type Words (Space Separated):</label>
+                    <textarea id="customWordsInput" class="custom-textarea" placeholder="apple banana pear"></textarea>
+                    
+                    <div class="divider">OR UPLOAD FILE</div>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="txtFileInput" accept=".txt" class="file-input">
+                    </div>
+                    <button id="loadCustomBtn" class="load-btn">⚡ Load Words</button>
+                    <div id="customStatus" style="color:#4CAF50;"></div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">⚡ Ball Speed</label>
+                <select id="speedSelect" class="custom-select">
+                    <option value="0.3">Slow 🐢</option>
+                    <option value="0.6" selected>Medium 🐇</option>
+                    <option value="0.9">Fast 🐆</option>
+                </select>
+            </div>
+            
+            <div class="setting-group">
+                <label class="setting-label">🏆 Winning Score</label>
+                <div class="win-score-input">
+                    <input type="number" id="winScoreInput" min="1" max="100" value="10">
+                    <span style="color: #6A1B9A; font-weight: bold; margin-left: 5px;">points</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-controls-top" style="margin-top: 15px; text-align: center;">
+            <button id="startGameBtn" class="top-btn">▶ Start</button>
+            <button id="pauseGameBtn" class="top-btn pause">⏸ Pause</button>
+            <button id="resetGameBtn" class="top-btn reset">↺ Reset</button>
+        </div>
+    </div>
+    
+    <div class="spelling-container">
+        <div id="turnIndicator" class="turn-indicator">Press Start to Play!</div>
+        <div class="current-word" id="currentWordDisplay">Ready?</div>
+        <div id="wordHint" style="color:#5D3F6A; font-size:1.4rem; font-weight: bold;"></div>
+        <div id="spellingFeedback" style="font-size:2rem; font-weight:bold; height:40px; margin-top: 10px;"></div>
+    </div>
+    
+    <div class="game-container">
+        <div class="score-overlay">
+            <div class="score-box-small">
+                <div class="score-label-small" id="leftScoreLabel">Computer</div>
+                <div id="leftScore" class="score-value-small p1-color">0</div>
+            </div>
+
+            <div class="coin-box-small">
+                <div class="coin-icon-small">¥</div>
+                <div class="coin-val-small" id="coinCounter">0</div>
+            </div>
+
+            <div class="score-box-small">
+                <div class="score-label-small" id="rightScoreLabel">Player</div>
+                <div id="rightScore" class="score-value-small p2-color">0</div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="1000" height="420"></canvas>
+        
+        <div id="gameStatus" class="game-status">
+            <div class="firework fw-1"></div>
+            <div class="firework fw-2"></div>
+            <div class="firework fw-3"></div>
+
+            <div class="corner-decoration top-left">🔮</div>
+            <div class="corner-decoration top-right">🔮</div>
+            <div class="corner-decoration bottom-left">🔮</div>
+            <div class="corner-decoration bottom-right">🔮</div>
+        
+            <div id="winAnim" class="unicorn-anim">🦄</div>
+            <div class="status-title" id="statusTitle">Game Over</div>
+            <div class="status-message" id="statusMessage"></div>
+            <div class="modal-btn-group">
+                <button id="homeBtn" class="top-btn home">🏠 Home</button>    
+                <button id="modalBtn" class="top-btn home">Play Again</button>
+                <button id="reviewBtn" class="top-btn home">📝 Review</button>
+            </div>          
+        </div>
+        
+        <div id="countdownOverlay" class="countdown-overlay">
+            <div id="countdownText" class="countdown-text"></div>
+        </div>
+    </div>
+    
+    <div id="reviewModal" style="display: none; position: fixed; z-index: 20000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);">
+        <div style="background-color: #fff; margin: 5% auto; padding: 25px; border: 5px solid #FF9800; width: 90%; max-width: 700px; border-radius: 25px; position: relative; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; max-height: 80vh; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">        
+            <h2 style="color: #E65100; margin-bottom: 15px; text-align: center; font-family: 'Comic Sans MS', sans-serif;">📝 Game Review</h2>          
+            <div id="reviewPlayerControls" style="display: none; justify-content: center; gap: 15px; margin-bottom: 15px;">
+                <button id="reviewP1Btn" class="review-tab active">Player 1</button>
+                <button id="reviewP2Btn" class="review-tab">Player 2</button>
+            </div>
+            <div style="text-align: center; margin-bottom: 10px; font-size: 0.9em; color: #666;">
+                Here are the words you missed or answered correctly.
+            </div>
+            <div id="reviewListContainer" style="flex: 1; overflow-y: auto; border: 2px dashed #FFCC80; border-radius: 15px; padding: 15px; margin-bottom: 15px; background: #FFF3E0;">
+                </div>
+            <div style="text-align: center;">
+                <button id="closeReviewBtn" class="top-btn" style="background: #757575; border-bottom: 4px solid #616161;">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="rules-container">
+        <h3 class="rules-title">📖 Game Rules </h3>
+        <div class="rules-grid">
+            <div class="rules-col">
+                <ul>
+                    <li><strong>🤖 1 Player Mode (You vs Computer):</strong><br>
+                        You and the Computer take turns.
+                        <br>✅ <strong>You are correct:</strong> You get +1 Point.
+                        <br>❌ <strong>You are wrong:</strong> Computer gets +1 Point.
+                    </li>
+                    <li><strong>👫 2 Player Mode (Friend Battle):</strong><br>
+                        Type names for the two players. Then they take turns.
+                        <br>✅ Correct answer = <strong>+1 Point for You</strong>.
+                        <br>❌ Wrong answer = <strong>+1 Point for Opponent</strong>.
+                    </li>
+                    <li><strong>⚖️ Fair Play Rule:</strong><br>
+                        Any mistake (wrong letter or missing the ball) immediately gives a point to the <strong>other side</strong> and switches the turn.
+                    </li>
+                </ul>
+            </div>
+            <div class="rules-col">
+                <ul>
+                    <li><strong>⚙️ Difficulty & Speed:</strong><br>
+                        <strong>Ball Speed:</strong> Use the dropdown to choose:<br>
+                        🐢 Slow &nbsp;|&nbsp; 🐇 Medium &nbsp;|&nbsp; 🐆 Fast<br>
+                        <strong>Winning Score:</strong> Set points needed to win the match.
+                    </li>
+                    <li><strong>📝 Custom Word List:</strong><br>
+                        Select <strong>"✏️ Custom List"</strong>. Then choose a method:
+                        <br>1. <strong>Type:</strong> Enter words separated by spaces.
+                        <br>2. <strong>Upload:</strong> Choose a <strong>.txt</strong> file (one word per line).
+                        <br>👉 Must click <strong>"⚡ Load Words"</strong> to start!
+                    </li>
+                    <li><strong>🏆 Rewards:</strong><br>
+                        First to reach the target score wins!
+                        <br>Every correct answer earns you <strong>1 Gold Coin (¥)</strong>.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/wordlist.js"></script>
+    
+    <script>
+        // --- CONFIGURATION ---
+        let musicTimer = null; 
+        
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const paddleWidth = 25;
+        const paddleHeight = 120;
+        const ballSize = 30;
+        
+        // Game Variables
+        let winScore = 10;
+        let speedMultiplier = 1.0; 
+        let gameMode = "spelling"; 
+        let difficulty = "grade1"; 
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameOver = false;
+        let countdownActive = false;
+        
+        let scoreLeft = 0;
+        let scoreRight = 0;
+        let goldCoins = 0;
+        
+        // Physics Variables
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        let baseBallSpeed = 120; 
+        let ballSpeedX = 120;
+        let ballSpeedY = 60;
+        
+        let paddleLeftY = canvas.height / 2 - paddleHeight / 2;
+        let paddleRightY = canvas.height / 2 - paddleHeight / 2;
+        const paddleLeftX = 20;
+        const paddleRightX = canvas.width - paddleWidth - 20;
+        
+        let animationFrameId;
+        
+        let nextServer = 'right'; 
+
+        // Spelling Logic
+        let currentWord = "";
+        let missingLetter = "";
+        let waitingForInput = false;
+        let computerThinking = false; 
+        let turnOwner = "none"; 
+        let usedWords = []; 
+        let customWords = []; 
+
+        // --- DOM ELEMENTS ---
+        const ui = {
+            leftScore: document.getElementById('leftScore'),
+            rightScore: document.getElementById('rightScore'),
+            leftLabel: document.getElementById('leftScoreLabel'),
+            rightLabel: document.getElementById('rightScoreLabel'),
+            wordDisplay: document.getElementById('currentWordDisplay'),
+            hintDisplay: document.getElementById('wordHint'),
+            feedback: document.getElementById('spellingFeedback'),
+            statusModal: document.getElementById('gameStatus'),
+            statusTitle: document.getElementById('statusTitle'),
+            statusMessage: document.getElementById('statusMessage'),
+            winAnim: document.getElementById('winAnim'),
+            modalBtn: document.getElementById('modalBtn'),
+            homeBtn: document.getElementById('homeBtn'),
+            turnIndicator: document.getElementById('turnIndicator'),
+            winInput: document.getElementById('winScoreInput'),
+            coins: document.getElementById('coinCounter'),
+            pauseBtn: document.getElementById('pauseGameBtn'),
+            diffSelect: document.getElementById('difficultySelect'),
+            speedSelect: document.getElementById('speedSelect'),
+            wordCountDisplay: document.getElementById('wordCountDisplay'), 
+            
+            // Custom UI
+            customContainer: document.getElementById('customInputContainer'),
+            customInput: document.getElementById('customWordsInput'),
+            loadBtn: document.getElementById('loadCustomBtn'),
+            customStatus: document.getElementById('customStatus'),
+            
+            // Register New Elements
+            loadBtn: document.getElementById('loadCustomBtn'),
+            customStatus: document.getElementById('customStatus'),
+            fileInput: document.getElementById('txtFileInput'),
+            
+            // Name Inputs
+            nameInputGroup: document.getElementById('nameInputGroup'),
+            p1Name: document.getElementById('p1NameInput'),
+            p2Name: document.getElementById('p2NameInput'),
+            
+            // Countdown
+            countdownOverlay: document.getElementById('countdownOverlay'),
+            countdownText: document.getElementById('countdownText')
+        };
+        
+        let gameHistory = [];         
+        let currentHistoryEntry = null; 
+
+        // --- AUDIO SYSTEM ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(freq, type, duration, vol=0.1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playCoinSound() {
+            playTone(987.77, 'square', 0.1, 0.1); 
+            setTimeout(() => playTone(1318.51, 'square', 0.3, 0.1), 80);
+        }
+
+        function playHitSound() {
+            playTone(150, 'triangle', 0.05, 0.1); 
+        }
+
+        function playWinPointSound() {
+            let now = audioCtx.currentTime;
+            playTone(440, 'square', 0.1, 0.1);
+            setTimeout(() => playTone(880, 'square', 0.1, 0.1), 100);
+            setTimeout(() => playTone(1760, 'square', 0.2, 0.1), 200);
+        }
+
+        function playCountdownSound(number) {
+            if (number === 3 || number === 2 || number === 1) {
+                playTone(440 - (3 - number) * 100, 'sine', 0.2, 0.2);
+            } else if (number === 'Go') {
+                playTone(880, 'sine', 0.3, 0.3);
+                setTimeout(() => playTone(1760, 'sine', 0.2, 0.2), 150);
+            }
+        }
+
+        function playMarioWin() {
+            const now = audioCtx.currentTime;
+            const type = 'square';
+            const vol = 0.15;
+            const notes = [
+                {f: 196.00, t: 0}, {f: 261.63, t: 100}, {f: 329.63, t: 200}, {f: 392.00, t: 300}, 
+                {f: 523.25, t: 400}, {f: 659.25, t: 500}, {f: 783.99, t: 600}, {f: 659.25, t: 700}  
+            ];
+            notes.forEach(n => {
+                setTimeout(() => playTone(n.f, type, 0.08, vol), n.t);
+            });
+            setTimeout(() => { playTone(196.00, type, 0.1, vol); }, 1100);
+            setTimeout(() => { playTone(164.81, type, 0.1, vol); }, 1250);
+            setTimeout(() => {
+                playTone(130.81, type, 1.5, vol); 
+                playTone(261.63, type, 1.5, vol); 
+                playTone(329.63, type, 1.5, vol); 
+            }, 1400);
+        }
+
+        // Mario Start Game Sound
+        function playMarioStartSound() {
+             const type = 'square';
+             const vol = 0.2; 
+             const notes = [
+                 {f: 659.25, t: 0}, {f: 659.25, t: 150}, {f: 659.25, t: 300}, 
+                 {f: 523.25, t: 450}, {f: 659.25, t: 600}, {f: 783.99, t: 750}, {f: 392.00, t: 1000}  
+             ];
+             notes.forEach(n => {
+                 setTimeout(() => playTone(n.f, type, 0.1, vol), n.t);
+             });
+        }
+
+        // Mario Game Over / Death Sound
+        function playMarioGameOver() {
+             const type = 'sawtooth';
+             const vol = 0.2;
+             const notes = [
+                 {f: 493.88, t: 0}, {f: 369.99, t: 200}, {f: 369.99, t: 350}, 
+                 {f: 369.99, t: 500}, {f: 329.63, t: 650}, {f: 293.66, t: 800}, {f: 261.63, t: 950} 
+             ];
+             notes.forEach(n => {
+                 setTimeout(() => playTone(n.f, type, 0.12, vol), n.t);
+             });
+        }
+        
+        // Speak the Word Out - 单词朗读功能（使用Web Speech API）
+        let audioUnlocked = false; 
+        
+        if (!window.speechUtterances) {
+            window.speechUtterances = [];
+        }
+
+        function unlockAudio() {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(err => console.log('AudioContext resume failed:', err));
+            }
+            
+            if (!audioUnlocked && 'speechSynthesis' in window) {
+                const testUtterance = new SpeechSynthesisUtterance('');
+                testUtterance.volume = 0;
+                window.speechUtterances.push(testUtterance);
+                testUtterance.onend = function() {
+                    const index = window.speechUtterances.indexOf(testUtterance);
+                    if (index > -1) window.speechUtterances.splice(index, 1);
+                };
+                window.speechSynthesis.speak(testUtterance);
+                audioUnlocked = true;
+            }
+        }
+        
+        document.addEventListener('click', unlockAudio, { once: true });
+        document.addEventListener('touchstart', unlockAudio, { once: true });
+        document.addEventListener('keydown', unlockAudio, { once: true });
+        
+        window.utteranceRef = null; 
+
+        function speakWord(text) {
+            if (!text) return;
+            if (!('speechSynthesis' in window)) {
+                console.warn("Browser does not support TTS.");
+                return;
+            }
+
+            const synth = window.speechSynthesis;
+
+            if (synth.speaking || synth.paused) {
+                synth.cancel();
+                synth.resume(); 
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            window.utteranceRef = utterance;
+
+            let voices = synth.getVoices();
+            if (voices.length === 0) {
+                setTimeout(() => {
+                    speakWord(text); 
+                }, 50);
+                return;
+            }
+
+            const enVoice = voices.find(v => v.lang.includes('en-US') && v.localService) 
+                         || voices.find(v => v.lang.includes('en-US'))
+                         || voices.find(v => v.lang.includes('en'));
+            
+            if (enVoice) {
+                utterance.voice = enVoice;
+            }
+
+            utterance.lang = 'en-US';
+            utterance.rate = 0.6; 
+            utterance.volume = 1.0;
+            utterance.onerror = function(e) {
+                console.error('TTS Error:', e);
+                synth.cancel();
+                synth.resume();
+            };
+            
+            if (synth.paused) synth.resume();
+            synth.speak(utterance);
+            
+            const resumeInterval = setInterval(() => {
+                if (!synth.speaking) {
+                    clearInterval(resumeInterval);
+                } else {
+                    synth.resume();
+                }
+            }, 5000); 
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = function() {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
+        function togglePause() {
+            if (!gameRunning || gameOver) return;
+            gamePaused = !gamePaused;
+            if (gamePaused) {
+                ui.pauseBtn.textContent = "▶ Resume";
+                ui.turnIndicator.textContent = "Game Paused";
+                ui.pauseBtn.style.backgroundColor = "#66BB6A"; 
+            } else {
+                ui.pauseBtn.textContent = "⏸ Pause";
+                ui.turnIndicator.textContent = "Game Resumed";
+                ui.pauseBtn.style.backgroundColor = "#FFCA28"; 
+                startCountdown();
+            }
+        }
+
+        function startCountdown(forceStart = false) {
+            if (countdownActive && !forceStart) return;
+            
+            countdownActive = true;
+            gamePaused = true; 
+            ui.countdownOverlay.style.display = 'flex';
+            let count = 3;
+            function updateCountdown() {
+                if (count > 0) {
+                    ui.countdownText.textContent = count;
+                    playCountdownSound(count);
+                    count--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    ui.countdownText.textContent = "Go!";
+                    playCountdownSound('Go');
+                    setTimeout(() => {
+                        ui.countdownOverlay.style.display = 'none';
+                        countdownActive = false;
+                        gamePaused = false;
+                        if (gameRunning && !gameOver) {
+                            ui.pauseBtn.textContent = "⏸ Pause";
+                            ui.turnIndicator.textContent = "Game Started!";
+                            requestAnimationFrame(gameLoop);
+                            speakWord(currentWord);
+                        }
+                    }, 800);
+                }
+            }
+            updateCountdown();
+        }
+        
+        ui.fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                ui.customInput.value = text;
+                ui.loadBtn.click();
+            };
+            reader.readAsText(file);
+        });
+
+        ui.loadBtn.addEventListener('click', async () => {
+            const rawText = ui.customInput.value.trim();
+            if (!rawText) {
+                ui.customStatus.textContent = "Please enter some words first!";
+                ui.customStatus.style.color = "red";
+                return;
+            }
+
+            const rawWords = rawText.split(/\s+/).filter(w => w.length > 0 && /^[a-zA-Z]+$/.test(w));
+            
+            if (rawWords.length === 0) {
+                ui.customStatus.textContent = "No valid words found (English letters only).";
+                ui.customStatus.style.color = "red";
+                return;
+            }
+
+            ui.loadBtn.textContent = "⏳ Fetching Definitions...";
+            ui.loadBtn.disabled = true;
+            ui.customStatus.textContent = "";
+
+            customWords = [];
+
+            // 设置最大单词数
+            const processList = rawWords.slice(0, 500); 
+            
+            let successCount = 0;
+
+            for (const w of processList) {
+                try {
+                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${w}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        let definition = "Spelling Challenge";
+                        if (data[0] && data[0].meanings && data[0].meanings.length > 0) {
+                            const defObj = data[0].meanings[0].definitions[0];
+                            if (defObj) {
+                                definition = defObj.definition.split('.')[0]; 
+                                if (definition.length > 60) definition = definition.substring(0, 57) + "...";
+                            }
+                        }
+                        customWords.push({word: w.toLowerCase(), hint: definition});
+                        successCount++;
+                    } else {
+                         customWords.push({word: w.toLowerCase(), hint: "Spelling Challenge"});
+                         successCount++;
+                    }
+                } catch (e) {
+                    customWords.push({word: w.toLowerCase(), hint: "Spelling Challenge"});
+                    successCount++;
+                }
+            }
+
+            ui.loadBtn.textContent = "⚡ Load Words & Auto-Generate Meanings";
+            ui.loadBtn.disabled = false;
+            ui.customStatus.textContent = `Success! Loaded ${successCount} words ready for play.`;
+            ui.customStatus.style.color = "#4CAF50";
+            
+            if (!gameRunning) resetGame();
+        });
+
+        ui.speedSelect.addEventListener('change', (e) => {
+             speedMultiplier = parseFloat(e.target.value);
+        });
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                gameMode = btn.dataset.mode;
+                updateLabels();
+                resetGame();
+            });
+        });
+
+        ui.p1Name.addEventListener('input', updateLabels);
+        ui.p2Name.addEventListener('input', updateLabels);
+
+        ui.diffSelect.addEventListener('change', (e) => {
+            difficulty = e.target.value;
+            usedWords = []; 
+            if (difficulty === 'custom') {
+                ui.customContainer.style.display = 'flex';
+            } else {
+                ui.customContainer.style.display = 'none';
+            }
+            updateWordCount();
+            if (!gameRunning) resetGame();
+        });
+
+        ui.winInput.addEventListener('change', (e) => {
+            let val = parseInt(e.target.value);
+            if(val < 1) val = 1;
+            winScore = val;
+            e.target.value = val;
+        });
+
+        document.getElementById('startGameBtn').addEventListener('click', () => {
+            if (difficulty === 'custom' && customWords.length === 0) {
+                alert("Please enter custom words and click 'Load Words' first!");
+                return;
+            }
+            
+            // 强制播放空 utterance 来骗取 iOS Safari 的 autoplay 权限
+            if ('speechSynthesis' in window) {
+                const emptyUtterance = new SpeechSynthesisUtterance('');
+                emptyUtterance.volume = 0;
+                window.speechSynthesis.speak(emptyUtterance);
+                if (window.speechUtterances) {
+                    window.speechUtterances.push(emptyUtterance);
+                    emptyUtterance.onend = function() {
+                        const index = window.speechUtterances.indexOf(emptyUtterance);
+                        if (index > -1) window.speechUtterances.splice(index, 1);
+                    };
+                }
+            }
+            
+            if (musicTimer) clearTimeout(musicTimer);
+            
+            playMarioStartSound();
+
+            resetGame();
+            gameRunning = true;
+            ui.statusModal.style.display = 'none';
+            countdownActive = true; 
+            resetBall();
+            
+            musicTimer = setTimeout(() => {
+                startCountdown(true);
+                musicTimer = null;
+            }, 1500); 
+        });
+        
+        document.getElementById('resetGameBtn').addEventListener('click', resetGame);
+        ui.pauseBtn.addEventListener('click', togglePause);
+        document.getElementById('modalBtn').addEventListener('click', () => { 
+            if (musicTimer) clearTimeout(musicTimer);
+        
+            playMarioStartSound();
+            resetGame(); 
+            gameRunning = true;
+            ui.statusModal.style.display = 'none';
+            countdownActive = true;
+            resetBall();
+            musicTimer = setTimeout(() => {
+                startCountdown(true);
+                musicTimer = null;
+            }, 1500);
+        });
+        document.getElementById('homeBtn').addEventListener('click', resetGame); 
+        
+        document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            difficulty = e.target.value;
+            const customContainer = document.getElementById('customListContainer');
+            if (customContainer) {
+                if (difficulty === 'custom') {
+                    customContainer.style.display = 'block';
+                } else {
+                    customContainer.style.display = 'none';
+                }
+            }
+            updateWordCount();
+            resetGame();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.target === ui.customInput || e.target === ui.p1Name || e.target === ui.p2Name) {
+                return;
+            }
+            if (e.code === 'Space') {
+                e.preventDefault(); 
+                togglePause();
+            } else {
+                handleKeyInput(e);
+            }
+        });
+
+        function updateLabels() {
+            if (gameMode === 'spelling') {
+                ui.leftLabel.textContent = "🤖 Computer";
+                ui.rightLabel.textContent = "🦄 Player";
+                ui.nameInputGroup.style.display = "none";
+            } else {
+                ui.nameInputGroup.style.display = "flex";
+                let n1 = ui.p1Name.value.trim() || "Player 1";
+                let n2 = ui.p2Name.value.trim() || "Player 2";
+                ui.leftLabel.textContent = "🦁 " + toTitleCase(n1);
+                ui.rightLabel.textContent = "🦄 " + toTitleCase(n2);
+            }
+        }
+
+        function getWordList() {
+            switch(difficulty) {
+                case 'grade1': return wordsGrade1;
+                case 'grade2': return wordsGrade2;
+                case 'grade3': return wordsGrade3;
+                case 'grade4': return wordsGrade4;
+                case 'grade5': return wordsGrade5;
+                case 'grade6': return wordsGrade6;
+                case 'grade7': return wordsGrade7;
+                case 'grade8': return wordsGrade8;
+                case 'grade9': return wordsGrade9;
+                case 'grade10': return wordsGrade10;
+                case 'grade11': return wordsGrade11;
+                case 'grade12': return wordsGrade12;
+                case 'custom': 
+                    return customWords.length > 0 ? customWords : wordsGrade3; 
+                default: return wordsGrade3;
+            }
+        }
+        
+        function updateWordCount() {
+            let count = 0;
+            if (difficulty === 'grade1') count = wordsGrade1.length;
+            else if (difficulty === 'grade2') count = wordsGrade2.length;
+            else if (difficulty === 'grade3') count = wordsGrade3.length;
+            else if (difficulty === 'grade4') count = wordsGrade4.length;
+            else if (difficulty === 'grade5') count = wordsGrade5.length;
+            else if (difficulty === 'grade6') count = wordsGrade6.length;
+            else if (difficulty === 'grade7') count = wordsGrade7 ? wordsGrade7.length : 0;
+            else if (difficulty === 'grade8') count = wordsGrade8 ? wordsGrade8.length : 0;
+            else if (difficulty === 'grade9') count = wordsGrade9 ? wordsGrade9.length : 0;
+            else if (difficulty === 'grade10') count = wordsGrade10 ? wordsGrade10.length : 0;
+            else if (difficulty === 'grade11') count = wordsGrade11 ? wordsGrade11.length : 0;
+            else if (difficulty === 'grade12') count = wordsGrade12 ? wordsGrade12.length : 0;
+            else if (difficulty === 'custom') count = customWords.length;
+            
+            const display = document.getElementById('wordCountDisplay');
+            if (display) {
+                display.textContent = `Loaded ${count} words`;
+            }
+        }
+
+        function handleKeyInput(e) {
+            if (!gameRunning || gamePaused || !waitingForInput || gameOver || countdownActive) return;
+            
+            const key = e.key.toLowerCase();
+            if (!/^[a-z]$/.test(key)) return;
+
+            if (key === missingLetter) {
+                // ————【人类答对】————
+                playCoinSound(); 
+                if (currentHistoryEntry) {
+                    currentHistoryEntry.result = 'correct';
+                    gameHistory.push(currentHistoryEntry);
+                    currentHistoryEntry = null; 
+                }
+                goldCoins++;
+                ui.coins.textContent = goldCoins;
+                
+                // 逻辑：人类答对，人类加分
+                if (gameMode === '2player' && turnOwner === 'left') {
+                     scoreLeft++;
+                     ui.leftScore.textContent = scoreLeft;
+                } else {
+                     scoreRight++;
+                     ui.rightScore.textContent = scoreRight;
+                }
+                
+                ui.feedback.textContent = "Correct! +1 Point! ⭐";
+                ui.feedback.style.color = "#06D6A0";
+                ui.wordDisplay.textContent = currentWord;
+                
+                // 检查胜利
+                if (scoreLeft >= winScore) { endGame("computer_win"); return; }
+                if (scoreRight >= winScore) { endGame("player_win"); return; }
+
+                // 击球逻辑
+                hitBallByPlayer();
+                waitingForInput = false;
+
+                // 轮换：球飞向对面
+                if (gameMode === '2player') {
+                    setTimeout(() => {
+                        const nextPlayer = turnOwner === 'left' ? 'right' : 'left';
+                        generateNewWord(nextPlayer); 
+                    }, 800); 
+                } else {
+                    // 1人模式：球飞向左边，轮到计算机
+                    setTimeout(() => {
+                        generateNewWord('left');
+                    }, 800);
+                }
+
+                setTimeout(() => { ui.feedback.textContent = ""; }, 800);
+
+            } else {
+                // ————【人类答错】————
+                playTone(150, 'sawtooth', 0.2);
+                ui.feedback.textContent = "Wrong! Opponent Scores!";
+                ui.feedback.style.color = "#FF6B6B";
+                
+                if (currentHistoryEntry) {
+                    currentHistoryEntry.result = 'missed'; 
+                    gameHistory.push(currentHistoryEntry); 
+                    currentHistoryEntry = null; 
+                }
+                
+                // 逻辑：人类答错 -> 对手加分
+                if (gameMode === '2player') {
+                    if (turnOwner === 'right') { 
+                        scoreLeft++; 
+                        ui.leftScore.textContent = scoreLeft;
+                    } else {
+                        scoreRight++; 
+                        ui.rightScore.textContent = scoreRight;
+                    }
+                } else {
+                    // 1人模式：人类答错 -> 计算机加分
+                    scoreLeft++;
+                    ui.leftScore.textContent = scoreLeft;
+                }
+
+                // 检查胜利
+                if (scoreLeft >= winScore) { endGame("computer_win"); return; }
+                if (scoreRight >= winScore) { endGame("player_win"); return; }
+
+                // 强制轮换：本回合结束，下一球发给对手
+                waitingForInput = false; 
+                
+                // 确定下一球接球方
+                const nextTarget = (turnOwner === 'left') ? 'right' : 'left';
+                
+                setTimeout(() => {
+                    resetBall(nextTarget); 
+                }, 1000);
+            }
+        }
+        
+        function computerAttempt() {
+            if (!gameRunning || gamePaused || gameOver || countdownActive) return;
+            if (turnOwner !== 'left') return; 
+            
+            // ★★★ 设定：60% 正确率 ★★★
+            const isCorrect = Math.random() < 0.6; 
+            
+            if (isCorrect) {
+                // ————【计算机答对】————
+                playCoinSound(); 
+                // 逻辑：计算机答对 -> 计算机加分
+                scoreLeft++; 
+                ui.leftScore.textContent = scoreLeft;
+                
+                ui.feedback.textContent = "Computer Correct! +1 Point! 🤖";
+                ui.feedback.style.color = "#FF6B6B";
+                ui.wordDisplay.textContent = currentWord;
+                
+                if (scoreLeft >= winScore) { endGame("computer_win"); return; }
+
+                // 击球
+                hitBallByPlayer();
+                waitingForInput = false;
+
+                // 轮换：球飞向右侧（人类）
+                setTimeout(() => { generateNewWord('right'); }, 800);
+                setTimeout(() => { ui.feedback.textContent = ""; }, 800);
+
+            } else {
+                // ————【计算机答错】————
+                playTone(150, 'sawtooth', 0.2);
+                ui.feedback.textContent = "Computer Wrong! You Score!";
+                ui.feedback.style.color = "#06D6A0";
+                
+                // 逻辑：计算机答错 -> 人类加分
+                scoreRight++; 
+                ui.rightScore.textContent = scoreRight;
+                
+                if (scoreRight >= winScore) { endGame("player_win"); return; }
+                
+                waitingForInput = false;
+                
+                // 强制轮换：下一球发给人类 (Right)
+                setTimeout(() => {
+                    resetBall('right');
+                }, 1000);
+            }
+        }
+
+        function hitBallByPlayer() {
+            const isRightTurn = (turnOwner === 'right');
+            let newPaddleY = ballY - paddleHeight / 2;
+            newPaddleY = Math.max(0, Math.min(canvas.height - paddleHeight, newPaddleY));
+
+            if (isRightTurn) {
+                paddleRightY = newPaddleY;
+                ballX = paddleRightX - ballSize - 2; 
+            } else {
+                paddleLeftY = newPaddleY;
+                ballX = paddleLeftX + paddleWidth + 2;
+            }
+
+            let currentSpeed = baseBallSpeed * speedMultiplier;
+            ballSpeedX = isRightTurn ? -currentSpeed : currentSpeed;
+            ballSpeedY = ((Math.random() * 6) - 3) * 60; 
+        }
+        
+        function generateNewWord(forWhom) {
+            turnOwner = forWhom;
+            
+            const list = getWordList();
+            let randomObj;
+            
+            const estimatedGameNeed = winScore * 2;
+            
+            if (list.length < estimatedGameNeed) {
+                randomObj = list[Math.floor(Math.random() * list.length)];
+                currentWord = randomObj.word;
+            } else {
+                let availableWords = list.filter(w => !usedWords.includes(w.word));
+                if (availableWords.length === 0) {
+                    usedWords = []; 
+                    availableWords = list;
+                }
+                randomObj = availableWords[Math.floor(Math.random() * availableWords.length)];
+                currentWord = randomObj.word;
+                usedWords.push(currentWord); 
+            }
+            
+            let validIndices = [];
+            for (let i = 0; i < currentWord.length; i++) {
+                if (/[a-zA-Z]/.test(currentWord[i])) {
+                    validIndices.push(i);
+                }
+            }
+            
+            let missingIndex;
+            if (validIndices.length > 0) {
+                const randomIndexPointer = Math.floor(Math.random() * validIndices.length);
+                missingIndex = validIndices[randomIndexPointer];
+            } else {
+                missingIndex = 0; 
+            }
+            
+            missingLetter = currentWord[missingIndex]; 
+            
+            let displayStr = "";
+            for(let i=0; i<currentWord.length; i++) {
+                if (i === missingIndex) {
+                    displayStr += "_ "; 
+                } 
+                else if (currentWord[i] === ' ') {
+                    displayStr += "\u00A0\u00A0\u00A0"; 
+                } 
+                else {
+                    displayStr += currentWord[i] + " "; 
+                }
+            }
+            
+            ui.wordDisplay.textContent = displayStr;
+            ui.hintDisplay.textContent = "Hint: " + randomObj.hint;
+            
+            if (!countdownActive) {
+                speakWord(currentWord);
+            }
+            
+            if (gameMode === 'spelling') {
+                if (forWhom === 'left') {
+                    ui.turnIndicator.textContent = "🤖 Computer's Turn!";
+                    ui.turnIndicator.style.color = "#FF6B6B";
+                    waitingForInput = false;
+                    computerThinking = true; 
+                } else {
+                    ui.turnIndicator.textContent = "🦄 Your Turn! Type the Missing Letter!";
+                    ui.turnIndicator.style.color = "#8E24AA";
+                    waitingForInput = true;
+                    computerThinking = false; 
+                }
+            } else {
+                waitingForInput = true;
+                let p1 = ui.p1Name.value.trim() || "Player 1";
+                let p2 = ui.p2Name.value.trim() || "Player 2";
+                
+                if (forWhom === 'left') {
+                    ui.turnIndicator.textContent = `🦁 ${toTitleCase(p1)}'s Turn!`;
+                    ui.turnIndicator.style.color = "#FF6B6B"; 
+                } else {
+                    ui.turnIndicator.textContent = `🦄 ${toTitleCase(p2)}'s Turn!`;
+                    ui.turnIndicator.style.color = "#06D6A0"; 
+                }
+            }
+            
+            currentHistoryEntry = {
+                word: currentWord,
+                hint: randomObj.hint,
+                missingChar: missingLetter,
+                turn: forWhom, 
+                result: 'pending' 
+            };
+        }
+
+        function clearWordBoard() {
+            waitingForInput = false;
+            ui.wordDisplay.textContent = "";
+            ui.hintDisplay.textContent = "";
+            ui.turnIndicator.textContent = "";
+            if (gameMode === 'spelling') {
+                ui.turnIndicator.textContent = "🤖 Computer is thinking...";
+                ui.turnIndicator.style.color = "#555";
+            }
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            
+            gamePaused = false;
+            gameOver = false;
+            countdownActive = false;
+            scoreLeft = 0;
+            scoreRight = 0;
+            goldCoins = 0;
+            usedWords = []; 
+            gameHistory = []; 
+            currentHistoryEntry = null;
+            ui.leftScore.textContent = "0";
+            ui.rightScore.textContent = "0";
+            ui.coins.textContent = "0";
+            ui.wordDisplay.textContent = "Ready?";
+            ui.turnIndicator.textContent = "Press Start";
+            ui.hintDisplay.textContent = "";
+            ui.pauseBtn.textContent = "⏸ Pause";
+            ui.pauseBtn.style.backgroundColor = "#FFCA28";
+            ui.countdownOverlay.style.display = 'none';
+            
+            paddleLeftY = canvas.height/2 - paddleHeight/2;
+            paddleRightY = canvas.height/2 - paddleHeight/2;
+            ui.statusModal.style.display = 'none';
+            
+            nextServer = gameMode === 'spelling' ? 'right' : 'left'; 
+        }
+
+        function resetBall(forcedTarget) {
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            
+            let currentSpeed = baseBallSpeed * speedMultiplier;
+            let target;
+            if (forcedTarget) {
+                target = forcedTarget;
+            } else {
+                target = nextServer;
+            }
+
+            if (target === 'left') {
+                // Serve TO Left (P1/Computer)
+                ballX = canvas.width - 60;
+                ballSpeedX = -currentSpeed; 
+                generateNewWord('left');
+                nextServer = 'right'; 
+            } else {
+                // Serve TO Right (P2/Player)
+                ballX = 60;
+                ballSpeedX = currentSpeed;
+                generateNewWord('right');
+                nextServer = 'left'; 
+            }
+            
+            ballSpeedY = (Math.random() > 0.5 ? 1 : -1) * 180; 
+        }
+
+        function checkTurnLogic() {
+            if (gameMode === 'spelling') {
+                if (ballSpeedX > 0) generateNewWord('right');
+                else clearWordBoard();
+            } else {
+                if (ballSpeedX < 0) generateNewWord('left');
+                else generateNewWord('right');
+            }
+        }
+
+        function update(deltaTime = 0.016) {
+            if (gameOver || !gameRunning || gamePaused || countdownActive) return;
+
+            ballX += ballSpeedX * deltaTime;
+            ballY += ballSpeedY * deltaTime;
+
+            if (ballY < 0 || ballY > canvas.height) ballSpeedY = -ballSpeedY;
+            
+            if (computerThinking && ballSpeedX < 0 && ballX < (canvas.width / 3)) {
+                computerAttempt();       
+                computerThinking = false; 
+            }
+
+            // 碰撞检测：左拍
+            if (ballX < paddleLeftX + paddleWidth && ballX > paddleLeftX && 
+                ballY > paddleLeftY && ballY < paddleLeftY + paddleHeight) {
+                if (turnOwner === 'left' && waitingForInput === false) {
+                    if (ballSpeedX < 0) { ballSpeedX = -ballSpeedX; playHitSound(); }
+                }
+            }
+
+            // 碰撞检测：右拍
+            if (ballX > paddleRightX && ballX < paddleRightX + paddleWidth &&
+                ballY > paddleRightY && ballY < paddleRightY + paddleHeight) {
+                if (turnOwner === 'right' && waitingForInput === false) {
+                    if (ballSpeedX > 0) { ballSpeedX = -ballSpeedX; playHitSound(); }
+                }
+            }
+
+            // ————【漏球判分】————
+
+            // 左侧漏球 (Computer/P1 没接住/超时)
+            if (ballX < 0) {
+                if (currentHistoryEntry) {
+                    currentHistoryEntry.result = 'missed'; 
+                    gameHistory.push(currentHistoryEntry);
+                    currentHistoryEntry = null;
+                }
+            
+                // 逻辑：左侧失误 -> 右侧得分
+                scoreRight++; 
+                ui.rightScore.textContent = scoreRight;
+                
+                // 1人模式下播放胜利音效
+                if (gameMode !== '2player') {
+                    playWinPointSound();
+                } else {
+                    playTone(150, 'sawtooth', 0.2); 
+                }
+                
+                if (scoreRight >= winScore) { endGame("player_win"); return; }
+                
+                // 强制轮换：左侧没接住，下一球发给右侧 (Player/P2)
+                resetBall('right'); 
+            }
+            
+            // 右侧漏球 (Player/P2 没接住/超时)
+            if (ballX > canvas.width) {
+                if (currentHistoryEntry) {
+                    currentHistoryEntry.result = 'missed';
+                    gameHistory.push(currentHistoryEntry);
+                    currentHistoryEntry = null;
+                }
+                // 逻辑：右侧失误 -> 左侧得分
+                scoreLeft++;
+                ui.leftScore.textContent = scoreLeft;
+                playTone(200, 'sawtooth', 0.2); 
+                
+                if (scoreLeft >= winScore) { endGame("computer_win"); return; }
+                
+                // 强制轮换：右侧没接住，下一球发给左侧 (Computer/P1)
+                resetBall('left'); 
+            }
+        }
+
+        function endGame(result) {
+            gameOver = true;
+            gameRunning = false;
+            
+            if (typeof window.hideVirtualKeyboard === 'function') {
+                window.hideVirtualKeyboard();
+            }
+            
+            ui.statusModal.style.display = 'block';
+            
+            let titleText = "";
+            let messageText = "";
+            let color = "";
+            
+            let p1Name = "Computer";
+            let p2Name = "You";
+            if (gameMode === '2player') {
+                p1Name = ui.p1Name.value.trim() || "Player 1";
+                p2Name = ui.p2Name.value.trim() || "Player 2";
+            }
+
+            const fireworks = document.querySelectorAll('.firework');
+            const corners = document.querySelectorAll('.corner-decoration');
+
+            if (result === "player_win") {
+                // Right Side Won (Player / P2)
+                fireworks.forEach(f => f.style.display = 'block'); 
+                corners.forEach(c => c.textContent = "🔮");
+                ui.winAnim.textContent = "🦄";
+                
+                if (gameMode === 'spelling') {
+                    titleText = "You Are an English Genius!";
+                    color = "#9C27B0";
+                } else {
+                    titleText = toTitleCase(p2Name) + " Wins!";
+                    color = "#9C27B0"; 
+                }
+                
+                playMarioWin();
+                ui.modalBtn.textContent = "Play Again";
+                
+            } else {
+                // Left Side Won (Computer / P1)          
+                if (gameMode === 'spelling') {
+                    // 1P Mode & Computer Won -> Hide Fireworks, Play Fail Sound
+                    fireworks.forEach(f => f.style.display = 'none');
+                    corners.forEach(c => c.textContent = "💔");
+                    titleText = "Game Over";
+                    messageText = "Try Again! Let's Beat the Robot!";
+                    color = "#FF0000";
+                    playMarioGameOver(); 
+                } else {
+                    // 2P Mode P1 Won -> Show Fireworks
+                    fireworks.forEach(f => f.style.display = 'block');
+                    corners.forEach(c => c.textContent = "🔮");
+                    titleText = toTitleCase(p1Name) + " Wins!";
+                    color = "#9C27B0"; 
+                    playMarioWin(); 
+                }
+                ui.winAnim.textContent = gameMode === 'spelling' ? "🤖" : "🦁";
+                ui.modalBtn.textContent = "Try Again";
+            }
+            
+            ui.statusTitle.textContent = titleText;
+            ui.statusTitle.style.color = color;
+            
+            if (!messageText) {
+                messageText = `Final Score: ${scoreLeft} - ${scoreRight}`;
+                ui.statusMessage.style.color = "#555";
+            } else {
+                ui.statusMessage.style.color = "#FF0000";
+            }
+            ui.statusMessage.textContent = messageText;
+            
+            ui.winAnim.style.display = "inline-block";
+        }
+
+        function draw() {
+            ctx.fillStyle = '#7B1FA2'; 
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 5;
+            ctx.setLineDash([15, 15]);
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2, 0);
+            ctx.lineTo(canvas.width/2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#FF7043';
+            drawRoundedRect(ctx, paddleLeftX, paddleLeftY, paddleWidth, paddleHeight, 10);
+            
+            ctx.fillStyle = '#26C6DA';
+            drawRoundedRect(ctx, paddleRightX, paddleRightY, paddleWidth, paddleHeight, 10);
+            
+            ctx.font = (ballSize * 2.5) + "px Arial"; 
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            ctx.fillText("🦄", ballX, ballY);
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            if (gameRunning) {
+                const deltaTime = lastTime ? (currentTime - lastTime) / 1000 : 0.016; 
+                lastTime = currentTime;
+                
+                if (!gamePaused && !countdownActive) update(deltaTime);
+                draw();
+                animationFrameId = requestAnimationFrame(gameLoop);
+            } else {
+                lastTime = 0; 
+            }
+        }
+
+        init();
+        function init() {
+            resetGame();
+            draw();
+            updateLabels();
+        }
+        updateWordCount();
+        
+        // ==========================================
+        // ★★★ 双人复盘系统逻辑 ★★★
+        // ==========================================
+        
+        const reviewBtn = document.getElementById('reviewBtn');
+        const reviewModal = document.getElementById('reviewModal');
+        const closeReviewBtn = document.getElementById('closeReviewBtn');
+        const reviewP1Btn = document.getElementById('reviewP1Btn');
+        const reviewP2Btn = document.getElementById('reviewP2Btn');
+        const reviewControls = document.getElementById('reviewPlayerControls');
+        let reviewSide = 'right'; 
+
+        if (reviewBtn) reviewBtn.addEventListener('click', () => {
+            if (typeof window.hideVirtualKeyboard === 'function') {
+                window.hideVirtualKeyboard();
+            }
+            
+            if (gameMode === '2player') {
+                reviewControls.style.display = 'flex';
+                let n1 = ui.p1Name.value.trim() || "Player 1";
+                let n2 = ui.p2Name.value.trim() || "Player 2";
+                reviewP1Btn.textContent = "🦁 " + n1; 
+                reviewP2Btn.textContent = "🦄 " + n2;                
+                reviewSide = 'left'; 
+                updateReviewTabs();
+            } else {
+                reviewControls.style.display = 'none';
+                reviewSide = 'right';
+            }
+            
+            renderReviewList();
+            reviewModal.style.display = 'block';
+        });
+
+        if (closeReviewBtn) closeReviewBtn.addEventListener('click', () => {
+            reviewModal.style.display = 'none';
+            if (typeof window.showVirtualKeyboard === 'function') {
+                setTimeout(() => {
+                    window.showVirtualKeyboard();
+                }, 100);
+            }
+        });
+
+        if (reviewP1Btn) reviewP1Btn.addEventListener('click', () => {
+            reviewSide = 'left';  
+            updateReviewTabs();   
+            renderReviewList();   
+        });
+
+        if (reviewP2Btn) reviewP2Btn.addEventListener('click', () => {
+            reviewSide = 'right'; 
+            updateReviewTabs();
+            renderReviewList();
+        });
+
+        function updateReviewTabs() {
+            if (reviewSide === 'left') {
+                reviewP1Btn.classList.add('active');
+                reviewP2Btn.classList.remove('active');
+            } else {
+                reviewP1Btn.classList.remove('active');
+                reviewP2Btn.classList.add('active');
+            }
+        }
+
+        function renderReviewList() {
+            const listContainer = document.getElementById('reviewListContainer');
+            const filteredHistory = gameHistory.filter(item => item.turn === reviewSide);
+            let html = "";          
+            if (filteredHistory.length === 0) {
+                let emptyName = (reviewSide === 'left') ? (ui.p1Name.value || "Player 1") : (ui.p2Name.value || "Player 2");
+                if (gameMode === 'spelling') emptyName = "You"; 
+                
+                html = `<div style='text-align:center; padding:30px; color:#999; font-style:italic;'>
+                            No words recorded for <strong>${emptyName}</strong> this round.
+                        </div>`;
+            } else {
+                filteredHistory.forEach(item => {
+                    let statusClass = '';
+                    let statusText = '';
+                    let detailHtml = `<div class="review-ans">Answer: <strong>${item.word}</strong> (Missing: '${item.missingChar}')</div>`;
+
+                    if (item.result === 'correct') {
+                        statusClass = 'tag-correct';
+                        statusText = '✅ Correct';
+                    } else {
+                        statusClass = 'tag-missed';
+                        statusText = '❌ Missed';
+                    }
+
+                    html += `
+                        <div class="review-item">
+                            <div>
+                                <div class="review-word">${item.word.replace(item.missingChar, '_')}</div>
+                                <div class="review-hint">${item.hint}</div>
+                                ${detailHtml}
+                            </div>
+                            <div class="status-tag ${statusClass}">
+                                ${statusText}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            listContainer.innerHTML = html;
+        } 
+
+        /* ========== 横屏检测和提示 ========== */
+        (function() {
+            const orientationHint = document.getElementById('orientationHint');
+            
+            if (!orientationHint) return; 
+            
+            function checkOrientation() {
+                const isPortrait = window.innerHeight > window.innerWidth;
+                const isMobile = window.innerWidth < 1024 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                
+                if (isPortrait && isMobile) {
+                    orientationHint.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    orientationHint.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            // 初始检测（延迟一下确保DOM完全加载）
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(checkOrientation, 100);
+                });
+            } else {
+                setTimeout(checkOrientation, 100);
+            }
+            
+            // 监听屏幕方向变化
+            window.addEventListener('orientationchange', function() {
+                setTimeout(checkOrientation, 150);
+            });
+            
+            // 监听窗口大小变化（处理某些设备的虚拟键盘弹出和方向变化）
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(checkOrientation, 200);
+            });
+        })();
+
+        /* ========== 虚拟键盘功能 ========== */
+        (function() {
+            // 检测是否为移动设备
+            function isMobileDevice() {
+                return window.innerWidth < 768 || 
+                       ('ontouchstart' in window) || 
+                       (navigator.maxTouchPoints > 0);
+            }
+
+            // 创建虚拟键盘HTML - 2行布局
+            function createVirtualKeyboard() {
+                const keyboardHTML = `
+                    <div id="virtualKeyboard">
+                        <button id="keyboardToggleBtn" class="keyboard-toggle-btn" title="Toggle Keyboard">⌨️</button>
+                        <div id="keyboardContent" class="keyboard-content">
+                            <!-- Row 1: A to N (14 letters) -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-key" data-key="a">A</div>
+                                <div class="keyboard-key" data-key="b">B</div>
+                                <div class="keyboard-key" data-key="c">C</div>
+                                <div class="keyboard-key" data-key="d">D</div>
+                                <div class="keyboard-key" data-key="e">E</div>
+                                <div class="keyboard-key" data-key="f">F</div>
+                                <div class="keyboard-key" data-key="g">G</div>
+                                <div class="keyboard-key" data-key="h">H</div>
+                                <div class="keyboard-key" data-key="i">I</div>
+                                <div class="keyboard-key" data-key="j">J</div>
+                                <div class="keyboard-key" data-key="k">K</div>
+                                <div class="keyboard-key" data-key="l">L</div>
+                                <div class="keyboard-key" data-key="m">M</div>
+                                <div class="keyboard-key" data-key="n">N</div>
+                            </div>
+                            <!-- Row 2: Shift + O to Z (1 Shift + 12 letters) -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-key shift-key wide" id="shiftKey" data-shift="false" title="Shift/Caps">⇧</div>
+                                <div class="keyboard-key" data-key="o">O</div>
+                                <div class="keyboard-key" data-key="p">P</div>
+                                <div class="keyboard-key" data-key="q">Q</div>
+                                <div class="keyboard-key" data-key="r">R</div>
+                                <div class="keyboard-key" data-key="s">S</div>
+                                <div class="keyboard-key" data-key="t">T</div>
+                                <div class="keyboard-key" data-key="u">U</div>
+                                <div class="keyboard-key" data-key="v">V</div>
+                                <div class="keyboard-key" data-key="w">W</div>
+                                <div class="keyboard-key" data-key="x">X</div>
+                                <div class="keyboard-key" data-key="y">Y</div>
+                                <div class="keyboard-key" data-key="z">Z</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', keyboardHTML);
+            }
+
+            // 初始化虚拟键盘
+            function initVirtualKeyboard() {
+                createVirtualKeyboard();
+                const keyboard = document.getElementById('virtualKeyboard');
+                const keyboardContent = document.getElementById('keyboardContent');
+                const toggleBtn = document.getElementById('keyboardToggleBtn');
+                const shiftKey = document.getElementById('shiftKey');
+                const keys = keyboard.querySelectorAll('.keyboard-key[data-key]');
+                
+                let isShiftActive = false;
+                let isCollapsed = false;
+
+                // Shift键功能
+                if (shiftKey) {
+                    shiftKey.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        isShiftActive = !isShiftActive;
+                        shiftKey.classList.toggle('active', isShiftActive);
+                        updateKeyboardCase();
+                    });
+
+                    shiftKey.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        isShiftActive = !isShiftActive;
+                        shiftKey.classList.toggle('active', isShiftActive);
+                        updateKeyboardCase();
+                    }, { passive: false });
+                }
+
+                // 更新键盘大小写显示
+                function updateKeyboardCase() {
+                    keys.forEach(key => {
+                        const keyValue = key.getAttribute('data-key');
+                        if (keyValue) {
+                            key.textContent = isShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+                        }
+                    });
+                }
+
+                // 折叠/展开功能
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleKeyboard();
+                    });
+
+                    toggleBtn.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleKeyboard();
+                    }, { passive: false });
+                }
+
+                function toggleKeyboard() {
+                    isCollapsed = !isCollapsed;
+                    if (isCollapsed) {
+                        keyboard.classList.add('collapsed');
+                        toggleBtn.textContent = '⌨️';
+                        toggleBtn.title = '展开键盘';
+                    } else {
+                        keyboard.classList.remove('collapsed');
+                        toggleBtn.textContent = '🔽';
+                        toggleBtn.title = '折叠键盘';
+                    }
+                }
+
+                // 隐藏键盘函数（供外部调用）
+                window.hideVirtualKeyboard = function() {
+                    keyboard.classList.add('collapsed');
+                    isCollapsed = true;
+                    toggleBtn.textContent = '⌨️';
+                };
+
+                // 显示键盘函数（供外部调用）
+                window.showVirtualKeyboard = function() {
+                    if (isMobileDevice()) {
+                        keyboard.classList.remove('collapsed');
+                        isCollapsed = false;
+                        toggleBtn.textContent = '🔽';
+                    }
+                };
+
+                // 为每个字母按键添加事件监听
+                keys.forEach(key => {
+                    const keyValue = key.getAttribute('data-key');
+                    if (!keyValue) return;
+                    
+                    // 点击事件
+                    key.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const actualKey = isShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+                        simulateKeyPress(actualKey);
+                        // 点击后自动关闭Shift（单次切换模式）
+                        if (isShiftActive) {
+                            isShiftActive = false;
+                            shiftKey.classList.remove('active');
+                            updateKeyboardCase();
+                        }
+                    });
+
+                    // 触摸事件
+                    key.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const actualKey = isShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+                        simulateKeyPress(actualKey);
+                        // 点击后自动关闭Shift（单次切换模式）
+                        if (isShiftActive) {
+                            isShiftActive = false;
+                            shiftKey.classList.remove('active');
+                            updateKeyboardCase();
+                        }
+                    }, { passive: false });
+                });
+
+                // 根据设备类型显示/隐藏键盘
+                if (isMobileDevice()) {
+                    keyboard.classList.add('show');
+                    toggleBtn.textContent = '🔽';
+                    toggleBtn.title = '折叠键盘';
+                } else {
+                    keyboard.classList.remove('show');
+                }
+
+                // 监听窗口大小变化
+                let resizeTimer;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function() {
+                        if (isMobileDevice()) {
+                            keyboard.classList.add('show');
+                        } else {
+                            keyboard.classList.remove('show');
+                        }
+                    }, 250);
+                });
+            }
+
+            // 模拟按键按下事件
+            function simulateKeyPress(key) {
+                // 创建真实的keydown事件
+                const keydownEvent = new KeyboardEvent('keydown', {
+                    key: key,
+                    code: 'Key' + key.toUpperCase(),
+                    keyCode: key.charCodeAt(0),
+                    which: key.charCodeAt(0),
+                    bubbles: true,
+                    cancelable: true
+                });
+
+                // 通过document.dispatchEvent触发事件，让游戏逻辑能够接收到
+                // 因为游戏的keydown监听器注册在document上
+                document.dispatchEvent(keydownEvent);
+            }
+
+            // 页面加载完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initVirtualKeyboard);
+            } else {
+                initVirtualKeyboard();
+            }
+        })();
+    </script>
+</body>
+</html>
